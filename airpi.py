@@ -45,8 +45,8 @@ def interrupt_handler(signal, frame):
     """Handle the Ctrl+C KeyboardInterrupt by exiting."""
     if gpsplugininstance:
         gpsplugininstance.stopController()
-    GPIO.output(greenpin, GPIO.LOW)
-    GPIO.output(redpin, GPIO.LOW)
+    GPIO.output(GREENPIN, GPIO.LOW)
+    GPIO.output(REDPIN, GPIO.LOW)
     print(os.linesep)
     print("Stopping sampling as requested...")
     sys.exit(1)
@@ -71,7 +71,7 @@ def get_subclasses(mod, cls):
 def check_conn():
     """Check internet connectivity.
 
-    Check whether there is internet connectivity by trying to connect to a website.
+    Check for internet connectivity by trying to connect to a website.
 
     Returns:
         Boolean True if successfully connects to the site within five seconds.
@@ -86,7 +86,9 @@ def check_conn():
     return False
 
 class MissingField(Exception):
-    """Exception to be raised when an imported plugin is missing a required field.  """
+    """Exception to be raised when an imported plugin is missing a required
+    field.
+    """
     pass
 
 if not os.path.isfile(SENSORSCFG):
@@ -111,7 +113,8 @@ for i in sensornames:
         try:
             filename = sensorconfig.get(i, "filename")
         except Exception:
-            msg = "Error: no filename config option found for sensor plugin " + str(i)
+            msg = "Error: no filename config option found for"
+            msg += " sensor plugin " + str(i)
             print(msg)
             logger.error(msg)
             raise
@@ -123,7 +126,8 @@ for i in sensornames:
         #if enabled, load the plugin
         if enabled:
             try:
-                mod = __import__('sensors.' + filename, fromlist=['a']) #Why does this work?
+                # 'a' means nothing below, but argument must be non-null
+                mod = __import__('sensors.' + filename, fromlist=['a'])
             except Exception:
                 msg = "Error: could not import sensor module " + filename
                 print(msg)
@@ -135,7 +139,8 @@ for i in sensornames:
                 if sensorclass == None:
                     raise AttributeError
             except Exception:
-                msg = "Error: could not find a subclass of sensor.Sensor in module" + filename
+                msg = "Error: could not find a subclass of sensor.Sensor
+                msg += " in module" + filename
                 print(msg)
                 logger.error(msg)
                 raise
@@ -151,19 +156,19 @@ for i in sensornames:
 
             plugindata = {}
 
-            for requiredfield in reqd:
-                if sensorconfig.has_option(i, requiredfield):
-                    plugindata[requiredfield] = sensorconfig.get(i, requiredfield)
+            for reqdfield in reqd:
+                if sensorconfig.has_option(i, reqdfield):
+                    plugindata[reqdfield] = sensorconfig.get(i, reqdfield)
                 else:
-                    msg = "Error: Missing required field '" + requiredfield
+                    msg = "Error: Missing required field '" + reqdfield
                     msg += "' for sensor plugin " + i + "." + os.linesep
                     msg += "Error: This should be found in file: " + SENSORSCFG
                     print(msg)
                     logger.error(msg)
                     raise MissingField
-            for optionalfield in opt:
-                if sensorconfig.has_option(i, optionalfield):
-                    plugindata[optionalfield] = sensorconfig.get(i, optionalfield)
+            for optfield in opt:
+                if sensorconfig.has_option(i, optfield):
+                    plugindata[optfield] = sensorconfig.get(i, optfield)
             instclass = sensorclass(plugindata)
             # check for a getval
             if callable(getattr(instclass, "getval", None)):
@@ -206,7 +211,8 @@ for i in outputnames:
         try:
             filename = outputconfig.get(i, "filename")
         except Exception:
-            msg = "Error: no filename config option found for output plugin " + str(i)
+            msg = "Error: no filename config option found for
+            msg += " output plugin " + str(i)
             print(msg)
             logger.error(msg)
             raise
@@ -218,7 +224,8 @@ for i in outputnames:
         #if enabled, load the plugin
         if enabled:
             try:
-                mod = __import__('outputs.' + filename, fromlist=['a']) #Why does this work?
+                # 'a' means nothing below, but argument must be non-null
+                mod = __import__('outputs.' + filename, fromlist=['a'])
             except Exception:
                 msg = "Error: could not import output module " + filename
                 print(msg)
@@ -230,7 +237,8 @@ for i in outputnames:
                 if outputclass == None:
                     raise AttributeError
             except Exception:
-                msg = "Error: could not find a subclass of output.Output in module " + filename
+                msg = "Error: could not find a subclass of output.Output"
+                msg += " in module " + filename
                 print(msg)
                 logger.error(msg)
                 raise
@@ -249,24 +257,27 @@ for i in outputnames:
                 async = False
 
             plugindata = {}
-            for requiredfield in reqd:
-                if outputconfig.has_option(i, requiredfield):
-                    plugindata[requiredfield] = outputconfig.get(i, requiredfield)
+            for reqdfield in reqd:
+                if outputconfig.has_option(i, reqdfield):
+                    plugindata[reqdfield] = outputconfig.get(i, reqdfield)
                 else:
-                    msg = "Error: Missing required field '" + requiredfield
+                    msg = "Error: Missing required field '" + reqdfield
                     msg += "' for output plugin " + str(i) + "." + os.linesep
                     msg += "Error: This should be found in file: " + OUTPUTSCFG
                     print(msg)
                     logger.error(msg)
                     raise MissingField
-            for optionalfield in opt:
-                if outputconfig.has_option(i, optionalfield):
-                    plugindata[optionalfield] = outputconfig.get(i, optionalfield)
+            for optfield in opt:
+                if outputconfig.has_option(i, optfield):
+                    plugindata[optfield] = outputconfig.get(i, optfield)
 
-            if outputconfig.has_option(i, "needsinternet") and outputconfig.getboolean(i, "needsinternet") and not check_conn():
-                msg = "Error: Skipping output plugin " + i + " because no internet connectivity."
-                print(msg)
-                logger.info(msg)
+            if outputconfig.has_option(i, "needsinternet"):
+                if outputconfig.getboolean(i, "needsinternet")
+                    if not check_conn():
+                        msg = "Error: Skipping output plugin " + i
+                        msg += " because no internet connectivity."
+                        print(msg)
+                        logger.info(msg)
             else:
                 instclass = outputclass(plugindata)
                 instclass.async = async
@@ -283,10 +294,11 @@ for i in outputnames:
                     logger.info(msg)
 
                 # Check for an outputmetadata function
-                if outputconfig.has_option(i, "metadatareqd") and outputconfig.getboolean(i, "metadatareqd"):
-                    if callable(getattr(instclass, "outputmetadata", None)):
-                        # We'll printthis later on
-                        metadata = instclass.outputmetadata()
+                if outputconfig.has_option(i, "metadatareqd"):
+                    if outputconfig.getboolean(i, "metadatareqd"):
+                        if callable(getattr(instclass, "outputmetadata", None)):
+                            # We'll printthis later on
+                            metadata = instclass.outputmetadata()
 
     except Exception as e: #add specific exception for missing module
         msg = "Error: Did not import output plugin " + str(i)
@@ -295,7 +307,8 @@ for i in outputnames:
         raise e
 
 if not outputplugins:
-    msg = "There are no output plugins enabled! Please enable at least one in " + OUTPUTSCFG + " and try again."
+    msg = "There are no output plugins enabled!"
+    msg += " Please enable at least one in " + OUTPUTSCFG + " and try again."
     print(msg)
     logger.error(msg)
     sys.exit(1)
@@ -319,7 +332,8 @@ for i in notificationnames:
         try:
             filename = notificationconfig.get(i, "filename")
         except Exception:
-            msg = "Error: no filename config option found for notification plugin " + str(i)
+            msg = "Error: no filename config option found for"
+            msg+= " notification plugin " + str(i)
             print(msg)
             logger.error(msg)
             raise
@@ -331,7 +345,8 @@ for i in notificationnames:
         #if enabled, load the plugin
         if enabled:
             try:
-                mod = __import__('notifications.' + filename, fromlist = ['a']) #Why does this work?
+                # 'a' means nothing below, but argument must be non-null
+                mod = __import__('notifications.' + filename, fromlist = ['a'])
             except Exception:
                 msg = "Error: could not import notification module " + filename
                 print(msg)
@@ -343,7 +358,8 @@ for i in notificationnames:
                 if notificationclass == None:
                     raise AttributeError
             except Exception:
-                msg = "Error: could not find a subclass of notification.Notification in module " + filename
+                msg = "Error: could not find a subclass of notification.Notification"
+                msg += " in module " + filename
                 print(msg)
                 logger.error(msg)
                 raise
@@ -367,29 +383,34 @@ for i in notificationnames:
 
             plugindata = {}
 
-            for requiredfield in reqd:
-                if notificationconfig.has_option(i, requiredfield):
-                    plugindata[requiredfield] = notificationconfig.get(i, requiredfield)
+            for reqdfield in reqd:
+                if notificationconfig.has_option(i, reqdfield):
+                    plugindata[reqdfield] = notificationconfig.get(i, reqdfield)
                 else:
-                    msg = "Error: Missing required field '" + requiredfield
-                    msg += "' for notification plugin " + str(i) + "." + os.linesep
-                    msg += "Error: This should be found in file: " + NOTIFICATIONSCFG
+                    msg = "Error: Missing required field '" + reqdfield
+                    msg += "' for notification plugin " + str(i)
+                    msg += "." + os.linesep
+                    msg += "Error: This should be found in file: "
+                    msg += NOTIFICATIONSCFG
                     print(msg)
                     logger.error(msg)
                     raise MissingField
 
-            for optionalfield in opt:
-                if notificationconfig.has_option(i, optionalfield):
-                    plugindata[optionalfield] = notificationconfig.get(i, optionalfield)
+            for optfield in opt:
+                if notificationconfig.has_option(i, optfield):
+                    plugindata[optfield] = notificationconfig.get(i, optfield)
 
             for commonField in common:
                 if notificationconfig.has_option("Common", commonField):
                     plugindata[commonField] = notificationconfig.get("Common", commonField)
 
-            if notificationconfig.has_option(i, "needsinternet") and notificationconfig.getboolean(i, "needsinternet") and not check_conn():
-                msg = "Error: Skipping notification plugin " + str(i) + " because no internet connectivity."
-                print(msg)
-                logger.info(msg)
+            if notificationconfig.has_option(i, "needsinternet"):
+                if notificationconfig.getboolean(i, "needsinternet")
+                    if not check_conn():
+                        msg = "Error: Skipping notification plugin " + str(i)
+                        msg += " because no internet connectivity."
+                        print(msg)
+                        logger.info(msg)
             else:
                 instclass = notificationclass(plugindata)
                 instclass.async = async
@@ -401,7 +422,8 @@ for i in notificationnames:
                     print(msg)
                     logger.info(msg)
                 else:
-                    msg = "Error: no callable sendnotification() function for notification plugin " + str(i)
+                    msg = "Error: no callable sendnotification() function for"
+                    msg += " notification plugin " + str(i)
                     print(msg)
                     logger.info(msg)
 
@@ -421,20 +443,20 @@ mainconfig = configparser.SafeConfigParser()
 mainconfig.read(SETTINGSCFG)
 
 lastupdated = 0
-samplefreq = mainconfig.getfloat("Main", "sampleFreq")
-operator = mainconfig.get("Main", "operator")
-redpin = mainconfig.getint("Main", "redpin")
-greenpin = mainconfig.getint("Main", "greenpin")
-printerrors = mainconfig.getboolean("Main", "printerrors")
-successled = mainconfig.get("Main", "successled")
-failled = mainconfig.get("Main", "failled")
+SAMPLEFREQ = mainconfig.getfloat("Main", "sampleFreq")
+OPERATOR = mainconfig.get("Main", "operator")
+REDPIN = mainconfig.getint("Main", "redPin")
+GREENPIN = mainconfig.getint("Main", "greenPin")
+PRINTERRORS = mainconfig.getboolean("Main", "printErrors")
+SUCCESSLED = mainconfig.get("Main", "successLED")
+FAILLED = mainconfig.get("Main", "failLED")
 greenhaslit = False
 redhaslit = False
 
-if redpin:
-    GPIO.setup(redpin, GPIO.OUT, initial=GPIO.LOW)
-if greenpin:
-    GPIO.setup(greenpin, GPIO.OUT, initial=GPIO.LOW)
+if REDPIN:
+    GPIO.setup(REDPIN, GPIO.OUT, initial=GPIO.LOW)
+if GREENPIN:
+    GPIO.setup(GREENPIN, GPIO.OUT, initial=GPIO.LOW)
 
 # Register the signal handler
 signal.signal(signal.SIGINT, interrupt_handler)
@@ -457,11 +479,11 @@ while True:
     try:
         curtime = time.time()
         sampletime = None
-        if (curtime - lastupdated) > samplefreq:
+        if (curtime - lastupdated) > SAMPLEFREQ:
             lastupdated = curtime
             data = []
             alreadysentsensoralerts = False
-            #Collect the data from each sensor
+            # Collect the data from each sensor
             sensorsworking = True
             for i in sensorplugins:
                 datadict = {}
@@ -492,6 +514,7 @@ while True:
                     datadict["description"] = i.description
                     datadict["readingtype"] = i.readingtype
                 data.append(datadict)
+            # Record the outcome
             if sensorsworking:
                 logger.info("Success: Data obtained from all sensors.")
             else:
@@ -499,28 +522,30 @@ while True:
                     for j in notificationplugins:
                         j.sendnotification("alertsensor")
                     alreadysentsensoralerts = True
-                if printerrors:
+                if PRINTERRORS:
                     print("Error: Failed to obtain data from all sensors.")
                 logger.error("Failed to obtain data from all sensors.")
+            # Output data
             try:
                 outputsworking = True
                 for i in outputplugins:
                     outputsworking = i.outputdata(data, sampletime)
+                # Record the outcome
                 if outputsworking:
                     logger.info("Success: Data output in all requested formats.")
-                    if greenpin and (successled == "all" or (successled == "first" and not greenhaslit)):
-                        GPIO.output(greenpin, GPIO.HIGH)
+                    if GREENPIN and (SUCCESSLED == "all" or (SUCCESSLED == "first" and not greenhaslit)):
+                        GPIO.output(GREENPIN, GPIO.HIGH)
                         greenhaslit = True
                 else:
                     if not alreadysentoutputalerts:
                         for j in notificationplugins:
                             j.sendnotification("alertoutput")
                         alreadysentoutputalerts = True
-                    if printerrors:
+                    if PRINTERRORS:
                         print("Error: Failed to output in all requested formats.")
                     logger.error("Failed to output in all requested formats.")
-                    if redpin and (failled in ["all", "constant"] or (failled == "first" and not redhaslit)):
-                        GPIO.output(redpin, GPIO.HIGH)
+                    if REDPIN and (FAILLED in ["all", "constant"] or (FAILLED == "first" and not redhaslit)):
+                        GPIO.output(REDPIN, GPIO.HIGH)
                         redhaslit = True
             except KeyboardInterrupt:
                 raise
@@ -529,12 +554,12 @@ while True:
             else:
                 # delay before turning off LED
                 time.sleep(1)
-                if greenpin:
-                    GPIO.output(greenpin, GPIO.LOW)
-                if redpin and failled != "constant":
-                    GPIO.output(redpin, GPIO.LOW)
+                if GREENPIN:
+                    GPIO.output(GREENPIN, GPIO.LOW)
+                if REDPIN and FAILLED != "constant":
+                    GPIO.output(REDPIN, GPIO.LOW)
         try:
-            time.sleep(samplefreq-(time.time()-curtime)-0.01)
+            time.sleep(SAMPLEFREQ-(time.time()-curtime)-0.01)
         except KeyboardInterrupt:
             raise
         except Exception:
