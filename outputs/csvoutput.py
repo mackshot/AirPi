@@ -29,11 +29,11 @@ class CSVOutput(output.Output):
                 metadata += "\"Raspberry Pi ID\",\"" +  self.metadata['piid'] + "\""
                 self.file.write(metadata + "\n")
 
-	def outputData(self, datapoints):
+	def outputData(self, datapoints, sampletime):
 		if self.docal == 1:
 			datapoints = self.cal.calibrate(datapoints)
 
-		line = "\"" + str(datetime.datetime.now()) + "\"," + str(time.time())
+		line = "\"" + sampletime.strftime("%Y-%m-%d %H:%M:%S") + "\"," + str(time.time())
 		if self.header == False:
 			header = "\"Date and time\",\"Unix time\"";
 

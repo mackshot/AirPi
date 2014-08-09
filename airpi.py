@@ -16,12 +16,13 @@ import os
 import signal
 from urllib.request import urlopen
 import logging, logging.handlers
+from datetime import datetime
 from math import isnan
 from sensors import sensor
 from outputs import output
 from notifications import notification
 
-CFGDIR = '/home/pi/py3/airpi'
+CFGDIR = '/home/pi/AirPi3'
 SENSORSCFG = os.path.join(CFGDIR, 'sensors.cfg')
 OUTPUTSCFG = os.path.join(CFGDIR, 'outputs.cfg')
 SETTINGSCFG = os.path.join(CFGDIR, 'settings.cfg')
@@ -38,7 +39,7 @@ logger.addHandler(handler)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 # Uncomment below for more verbose logging output
-#logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 def interrupt_handler(signal, frame):
     """Handle the Ctrl+C KeyboardInterrupt by exiting."""
@@ -435,22 +436,29 @@ if redpin:
 if greenpin:
     GPIO.setup(greenpin, GPIO.OUT, initial=GPIO.LOW)
 
-print("Success: Setup complete - starting to sample...")
-print("Press Ctrl + C to stop sampling.")
-print("==========================================================")
-if metadata is not None:
-    print(metadata)
-    print("==========================================================")
-
 # Register the signal handler
 signal.signal(signal.SIGINT, interrupt_handler)
 
+print("Success: Setup complete.")
+if metadata is not None:
+    print("==========================================================")
+    print(metadata)
+    print("==========================================================")
+
+rightnow = datetime.now()
+seconds = float(rightnow.second + (rightnow.microsecond / 1000000))
+delay = (60 - seconds)
+print("Sampling will start in " + str(int(delay)) + " seconds...")
+print("Press Ctrl + C to stop sampling.")
+print("==========================================================")
+time.sleep(delay)
 
 while True:
     try:
-        curTime = time.time()
-        if (curTime - lastupdated) > samplefreq:
-            lastupdated = curTime
+        curtime = time.time()
+        sampletime = None
+        if (curtime - lastupdated) > samplefreq:
+            lastupdated = curtime
             data = []
             alreadysentsensoralerts = False
             #Collect the data from each sensor
@@ -459,6 +467,7 @@ while True:
                 datadict = {}
                 if i == gpsplugininstance:
                     val = i.getval()
+                    sampletime = datetime.now()
                     if isnan(val[2]): # this means it has no data to upload.
                         continue
                     logger.debug("GPS output %s" % (val,))
@@ -471,6 +480,7 @@ while True:
                     datadict["name"] = i.valname
                     datadict["sensor"] = i.sensorname
                 else:
+                    sampletime = datetime.now()
                     datadict["value"] = i.getval()
                     # TODO: Ensure this is robust
                     if datadict["value"] is None or isnan(float(datadict["value"])) or datadict["value"] == 0:
@@ -495,7 +505,7 @@ while True:
             try:
                 outputsworking = True
                 for i in outputplugins:
-                    outputsworking = i.outputdata(data)
+                    outputsworking = i.outputdata(data, sampletime)
                 if outputsworking:
                     logger.info("Success: Data output in all requested formats.")
                     if greenpin and (successled == "all" or (successled == "first" and not greenhaslit)):
@@ -524,7 +534,7 @@ while True:
                 if redpin and failled != "constant":
                     GPIO.output(redpin, GPIO.LOW)
         try:
-            time.sleep(samplefreq-(time.time()-curTime)-0.01)
+            time.sleep(samplefreq-(time.time()-curtime)-0.01)
         except KeyboardInterrupt:
             raise
         except Exception:

@@ -21,17 +21,17 @@ class Print(output.Output):
         toprint += "Raspberry Pi ID: " +  metadata['piid']
         return toprint
 
-    def outputdata(self, datapoints):
+    def outputdata(self, datapoints, sampletime):
         if self.docal == 1:
             datapoints = self.cal.calibrate(datapoints)
         if self.format == "csv":
-            theoutput = "\"" + time.strftime("%Y-%m-%d %H:%M:%S") + "\","
+            theoutput = "\"" + sampletime.strftime("%Y-%m-%d %H:%M:%S") + "\","
             for i in datapoints:
                 theoutput += str(i['value']) + ","
                 theoutput = theoutput[:-1]
                 print(theoutput)
         else:
-            print(("Time".ljust(17)) + ": " + time.strftime("%Y-%m-%d %H:%M:%S"))
+            print(("Time".ljust(17)) + ": " + sampletime.strftime("%Y-%m-%d %H:%M:%S"))
             for i in datapoints:
                 if i['name'] == "Location":
                     # print i['name'] + ": " + "Disposition:" + i['disposition'] + "Elevation: " + i['altitude'] + "Exposure: " + i['exposure'] + "Latitude: " + i['latitude'] + "Longitude: " + i['longitude']
