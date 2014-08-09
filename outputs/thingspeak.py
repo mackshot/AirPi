@@ -1,31 +1,31 @@
-import output
+from . import output
 import requests
-import calibration
+from . import calibration
 
 class Thingspeak(output.Output):
-	requiredParams = ["APIKey","needsinternet"]
-	optionalParams = ["calibration"]
+	requiredparams = ["APIKey","needsinternet"]
+	optionalparams = ["calibration"]
 
 	def __init__(self, params):
-		self.APIKey=params["APIKey"]
-		self.cal = calibration.Calibration.sharedClass
-                self.docal = self.checkCal(params)
+		self.apikey=params['apikey']
+		self.cal = calibration.Calibration.sharedclass
+                self.docal = self.checkcal(params)
 
-	def outputData(self, dataPoints):
+	def outputdata(self, datapoints):
 		if self.docal == 1:
-			dataPoints = self.cal.calibrate(dataPoints)
+			datapoints = self.cal.calibrate(datapoints)
 		arr ={} 
 		counter = 1
-		for i in dataPoints:
-			if i["value"] != None: #this means it has no data to upload.
-				arr["field" + str(counter)] = round(i["value"],2)
+		for i in datapoints:
+			if i['value'] != None: #this means it has no data to upload.
+				arr['field' + str(counter)] = round(i['value'], 2)
 			counter += 1
-		url = "https://api.thingspeak.com/update?key="+self.APIKey
+		url = "https://api.thingspeak.com/update?key=" + self.apikey
 		try:
 			z = requests.get(url, params=arr)
-			if z.text=="0": 
-				print "ThingSpeak Error: " + z.text
-				print "ThingSpeak URL: " + z.url
+			if z.text == "0": 
+				print("ThingSpeak Error: " + z.text)
+				print("ThingSpeak URL: " + z.url)
 				return False
 		except Exception:
 			return False

@@ -1,12 +1,12 @@
 import socket
 
 class Notification():
-    commonParams = ["msgalertsensor", "msgalertoutput", "msgdata"]
+    commonparams = ["msgalertsensor", "msgalertoutput", "msgdata"]
 
     def __init__(self, params):
         raise NotImplementedError
 
-    def getHostname(self):
+    def gethostname(self):
         if socket.gethostname().find('.')>=0:
             host = socket.gethostname()
         else:

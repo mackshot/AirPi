@@ -6,12 +6,12 @@ class Output():
     def __init__(self, params):
         raise NotImplementedError
 
-    def checkCal(self, params):
-        doCal = 0;
+    def checkcal(self, params):
+        calibrate = 0;
         if "calibration" in params:
-            if params["calibration"].lower() in ["on", "yes", "true", "1"]:
-                doCal = 1
-        return doCal
+            if params['calibration'].lower() in ["on", "yes", "true", "1"]:
+                calibrate = 1
+        return calibrate
 
     def getserial(self):
         # Extract CPU serial number from cpuinfo
@@ -27,20 +27,20 @@ class Output():
             cpuserial = "ERROR000000000"
         return cpuserial
 
-    def getHostname(self):
+    def gethostname(self):
         if socket.gethostname().find('.')>=0:
             host = socket.gethostname()
         else:
             host = socket.gethostbyaddr(socket.gethostname())[0]
         return host
 
-    def getMetadata(self):
+    def getmetadata(self):
         #TODO: Somehow grab the operator name
         operator = "Haydy"
         piid = self.getserial()
         metadata  = {"starttime":time.strftime("%H:%M on %A %d %B %Y"), \
         "operator":operator, \
         "piid":piid, \
-        "piname":self.getHostname() \
+        "piname":self.gethostname() \
         }
         return metadata

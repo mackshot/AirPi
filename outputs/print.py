@@ -1,52 +1,52 @@
-import output
+from . import output
 import datetime
 import time
-import calibration
+from . import calibration
 import os
 
 class Print(output.Output):
-    requiredParams = ["format"]
-    optionalParams = ["calibration", "metadata"]
+    requiredparams = ["format"]
+    optionalparams = ["calibration", "metadata"]
 
     def __init__(self, params):
-        self.cal = calibration.Calibration.sharedClass
-        self.docal = self.checkCal(params)
-	self.format = params["format"]
+        self.cal = calibration.Calibration.sharedclass
+        self.docal = self.checkcal(params)
+        self.format = params['format']
 
-    def outputMetadata(self):
-        metadata = self.getMetadata()
+    def outputmetadata(self):
+        metadata = self.getmetadata()
         toprint  = "Run started: " + metadata['starttime'] + os.linesep
         toprint += "Operator: " + metadata['operator'] + os.linesep
         toprint += "Raspberry Pi name: " + metadata['piname'] + os.linesep
         toprint += "Raspberry Pi ID: " +  metadata['piid']
         return toprint
 
-    def outputData(self, dataPoints):
+    def outputdata(self, datapoints):
         if self.docal == 1:
-            dataPoints = self.cal.calibrate(dataPoints)
+            datapoints = self.cal.calibrate(datapoints)
         if self.format == "csv":
-		theOutput = "\"" + time.strftime("%Y-%m-%d %H:%M:%S") + "\","
-        	for i in dataPoints:
-	                theOutput += str(i["value"]) + ","
-                theOutput = theOutput[:-1]
-                print theOutput
-	else:
-        	print ("Time".ljust(17)) + ": " + time.strftime("%Y-%m-%d %H:%M:%S")
-        	for i in dataPoints:
-            		if i["name"] == "Location":
-                		# print i["name"] + ": " + "Disposition:" + i["disposition"] + "Elevation: " + i["altitude"] + "Exposure: " + i["exposure"] + "Latitude: " + i["latitude"] + "Longitude: " + i["longitude"]
-                		pprint(i)
-            		else:
-                                theValue = i["value"]
-                                if type(theValue) is float:
-                                        if theValue > 10000:
-                                                theValue = int(round(i["value"], 0))
-                                        elif theValue > 1000:
-                                                theValue = round(i["value"], 1)
-                                        else:
-                                                theValue = round(i["value"], 2)
-                                else:
-                                        theValue = "-"
-                                print (i["name"].ljust(17)).replace("_", " ") + ": " + str(theValue).ljust(8) + " " + i["symbol"]
-                print "=========================================================="
+            theoutput = "\"" + time.strftime("%Y-%m-%d %H:%M:%S") + "\","
+            for i in datapoints:
+                theoutput += str(i['value']) + ","
+                theoutput = theoutput[:-1]
+                print(theoutput)
+        else:
+            print("Time".ljust(17)) + ": " + time.strftime("%Y-%m-%d %H:%M:%S")
+            for i in datapoints:
+                if i['name'] == "Location":
+                    # print i['name'] + ": " + "Disposition:" + i['disposition'] + "Elevation: " + i['altitude'] + "Exposure: " + i['exposure'] + "Latitude: " + i['latitude'] + "Longitude: " + i['longitude']
+                    pprint(i)
+                else:
+                    thevalue = i['value']
+                    if type(thevalue) is float:
+                        if thevalue > 10000:
+                            thevalue = int(round(i['value'], 0))
+                        elif thevalue > 1000:
+                            thevalue = round(i['value'], 1)
+                        else:
+                            thevalue = round(i['value'], 2)
+                        else:
+                            thevalue = "-"
+                print(i['name'].ljust(17)).replace("_", " ") + ": " + str(thevalue).ljust(8) + " " + i['symbol']
+            print("==========================================================")
         return True

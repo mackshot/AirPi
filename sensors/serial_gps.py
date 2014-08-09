@@ -1,14 +1,15 @@
-import sensor
-import GpsController
+from . import sensor
+from . import GpsController
 
 gpsc = None # define gps data structure
 
 class GPS(sensor.Sensor):
-    requiredData = []
-    optionalData = []
+    requireddata = []
+    optionaldata = []
+
     def __init__(self, data):
-        self.sensorName = "MTK3339"
-        self.valName = "Location"
+        self.sensorname = "MTK3339"
+        self.valname = "Location"
         # start the GPS data polling
         global gpsc
         try:
@@ -20,7 +21,7 @@ class GPS(sensor.Sensor):
             print "Exception:", e
             raise
 
-    def getVal(self):
+    def getval(self):
         global gpsc
         # we're mobile and outside if speed is above 1.0 m/s
         if gpsc.fix.speed > 1.0:
@@ -28,9 +29,9 @@ class GPS(sensor.Sensor):
         else:
             return (gpsc.fix.latitude, gpsc.fix.longitude, gpsc.fix.altitude, "fixed", "indoor")
 
-    def stopController(self):
+    def stopcontroller(self):
         global gpsc
-        print "Stopping gps controller"
+        print "Stopping GPS controller"
         gpsc.stopController()
         # wait for the thread to finish
         gpsc.join()
