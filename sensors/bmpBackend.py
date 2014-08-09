@@ -200,8 +200,8 @@ class BMP085 :
       print("DBG: X2 = %d" % (X2))
       print("DBG: B3 = %d" % (B3))
 
-    X1 = (self._cal_AC3 * int(B6) >> 13
-    X2 = (self._cal_B1 * ((int(B6) * int(B6) >> 12)) >> 16
+    X1 = (self._cal_AC3 * int(B6)) >> 13
+    X2 = (self._cal_B1 * ((int(B6) * int(B6) >> 12))) >> 16
     X3 = ((X1 + X2) + 2) >> 2
     B4 = (self._cal_AC4 * (X3 + 32768)) >> 15
     B7 = (UP - B3) * (50000 >> self.mode)

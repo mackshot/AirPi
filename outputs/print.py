@@ -31,7 +31,7 @@ class Print(output.Output):
                 theoutput = theoutput[:-1]
                 print(theoutput)
         else:
-            print("Time".ljust(17)) + ": " + time.strftime("%Y-%m-%d %H:%M:%S")
+            print(("Time".ljust(17)) + ": " + time.strftime("%Y-%m-%d %H:%M:%S"))
             for i in datapoints:
                 if i['name'] == "Location":
                     # print i['name'] + ": " + "Disposition:" + i['disposition'] + "Elevation: " + i['altitude'] + "Exposure: " + i['exposure'] + "Latitude: " + i['latitude'] + "Longitude: " + i['longitude']
@@ -45,8 +45,6 @@ class Print(output.Output):
                             thevalue = round(i['value'], 1)
                         else:
                             thevalue = round(i['value'], 2)
-                        else:
-                            thevalue = "-"
-                print(i['name'].ljust(17)).replace("_", " ") + ": " + str(thevalue).ljust(8) + " " + i['symbol']
+                print((i['name'].ljust(17)).replace("_", " ") + ": " + str(thevalue).ljust(8) + " " + i['symbol'])
             print("==========================================================")
         return True

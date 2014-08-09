@@ -21,7 +21,7 @@ from sensors import sensor
 from outputs import output
 from notifications import notification
 
-CFGDIR = '/home/pi/AirPi'
+CFGDIR = '/home/pi/py3/airpi'
 SENSORSCFG = os.path.join(CFGDIR, 'sensors.cfg')
 OUTPUTSCFG = os.path.join(CFGDIR, 'outputs.cfg')
 SETTINGSCFG = os.path.join(CFGDIR, 'settings.cfg')
