@@ -29,17 +29,17 @@ SETTINGSCFG = os.path.join(CFGDIR, 'settings.cfg')
 NOTIFICATIONSCFG = os.path.join(CFGDIR, 'notifications.cfg')
 
 LOG_FILENAME = os.path.join(CFGDIR, 'airpi.log')
-# Set up a specific LOGGER with our desired output level
+# Set up a specific logger with our desired output level
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
-# create HANDLER and add it to the LOGGER
+# create handler and add it to the logger
 HANDLER = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=40960, backupCount=5)
 LOGGER.addHandler(HANDLER)
-# create FORMATTER and add it to the HANDLER
+# create formatter and add it to the handler
 FORMATTER = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 HANDLER.setFormatter(FORMATTER)
 # Uncomment below for more verbose logging output
-# logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 def interrupt_handler(signal, frame):
     """Handle the Ctrl+C KeyboardInterrupt by exiting."""
@@ -100,7 +100,7 @@ if not os.path.isfile(SENSORSCFG):
 SENSORCONFIG = configparser.SafeConfigParser()
 SENSORCONFIG.read(SENSORSCFG)
 
-sensornames = SENSORCONFIG.sections()
+SENSORNAMES = SENSORCONFIG.sections()
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM) #Use BCM GPIO numbers.
@@ -108,7 +108,7 @@ GPIO.setmode(GPIO.BCM) #Use BCM GPIO numbers.
 sensorplugins = []
 gpsplugininstance = None
 
-for i in sensornames:
+for i in SENSORNAMES:
     try:
         try:
             filename = SENSORCONFIG.get(i, "filename")
@@ -201,13 +201,13 @@ if not os.path.isfile(OUTPUTSCFG):
 OUTPUTCONFIG = configparser.SafeConfigParser()
 OUTPUTCONFIG.read(OUTPUTSCFG)
 
-outputnames = OUTPUTCONFIG.sections()
+OUTPUTNAMES = OUTPUTCONFIG.sections()
 
 outputplugins = []
 
 metadata = None
 
-for i in outputnames:
+for i in OUTPUTNAMES:
     try:
         try:
             filename = OUTPUTCONFIG.get(i, "filename")
@@ -323,12 +323,12 @@ if not os.path.isfile(NOTIFICATIONSCFG):
 NOTIFICATIONCONFIG = configparser.SafeConfigParser()
 NOTIFICATIONCONFIG.read(NOTIFICATIONSCFG)
 
-notificationnames = NOTIFICATIONCONFIG.sections()
-notificationnames.remove("Common")
+NOTIFICATIONNAMES = NOTIFICATIONCONFIG.sections()
+NOTIFICATIONNAMES.remove("Common")
 
 notificationplugins = []
 
-for i in notificationnames:
+for i in NOTIFICATIONNAMES:
     try:
         try:
             filename = NOTIFICATIONCONFIG.get(i, "filename")
@@ -467,14 +467,18 @@ if metadata is not None:
     print("==========================================================")
     print(metadata)
     print("==========================================================")
+    del metadata
 
-rightnow = datetime.now()
-seconds = float(rightnow.second + (rightnow.microsecond / 1000000))
-delay = (60 - seconds)
-print("Sampling will start in " + str(int(delay)) + " seconds...")
+RIGHTNOW = datetime.now()
+SECONDS = float(RIGHTNOW.second + (RIGHTNOW.microsecond / 1000000))
+DELAY = (60 - SECONDS)
+del RIGHTNOW
+del SECONDS
+print("Sampling will start in " + str(int(DELAY)) + " seconds...")
 print("Press Ctrl + C to stop sampling.")
 print("==========================================================")
-time.sleep(delay)
+time.sleep(DELAY)
+del DELAY
 
 while True:
     try:
@@ -524,9 +528,10 @@ while True:
                     for j in notificationplugins:
                         j.sendnotification("alertsensor")
                     alreadysentsensoralerts = True
+                msg = "Error: Failed to obtain data from all sensors."
+                LOGGER.error(msg)
                 if PRINTERRORS:
-                    print("Error: Failed to obtain data from all sensors.")
-                LOGGER.error("Failed to obtain data from all sensors.")
+                    print(msg)
             # Output data
             try:
                 outputsworking = True
@@ -543,9 +548,10 @@ while True:
                         for j in notificationplugins:
                             j.sendnotification("alertoutput")
                         alreadysentoutputalerts = True
+                    msg = "Error: Failed to output in all requested formats."
+                    LOGGER.error(msg)
                     if PRINTERRORS:
-                        print("Error: Failed to output in all requested formats.")
-                    LOGGER.error("Failed to output in all requested formats.")
+                        print(msg)
                     if REDPIN and (FAILLED in ["all", "constant"] or (FAILLED == "first" and not redhaslit)):
                         GPIO.output(REDPIN, GPIO.HIGH)
                         redhaslit = True
@@ -554,7 +560,7 @@ while True:
             except Exception as excep:
                 LOGGER.error("Exception: %s" % excep)
             else:
-                # delay before turning off LED
+                # Delay before turning off LED
                 time.sleep(1)
                 if GREENPIN:
                     GPIO.output(GREENPIN, GPIO.LOW)
