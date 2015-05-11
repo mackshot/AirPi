@@ -37,7 +37,7 @@ case $1 in
     normal)
         echo "[AirPi] Starting normal AirPi sampling."
         echo "[AirPi] This run will end if you log out."
-        echo "[AirPi] Press Ctrl +  C to stop."
+        echo "[AirPi] Press Ctrl + C to stop."
         sudo python $DIR/airpi.py
         ;;
     bg)
