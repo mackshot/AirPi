@@ -69,17 +69,26 @@ class Output(object):
             return True
         else:
             msg = "Missing config section for plugin " + self.name + "."
-            print(msg)
-            msg += "This should be found in file: " + filetocheck
             #msg = format_msg(msg, 'error')
             print(msg)
             raise MissingSection
         return False
 
-    def extractparams(self, config, paramset, kind):
-        if paramset is not None:
+    def extractparams(self, config, expected, kind):
+        """ Extract individual parameters from a set.
+
+        Pull out individual parameters from a set (dict), and assess whether
+        the absence of an expected parameter is a major problem or not.
+
+        Args:
+            config: ConfigParser object containing the defined parameters.
+            expected: Dict containing the expected parameters.
+            kind: The kind of parameter, i.e. required or optional.
+
+        """
+        if expected is not None:
             extracted = {}
-            for param in paramset:
+            for param in expected:
                 if config.has_option(self.name, param):
                     extracted[param] = self.sanitiseparam(config.get(self.name, param))
                 else:
@@ -101,7 +110,21 @@ class Output(object):
 
     @staticmethod
     def sanitiseparam(value):
-        # Always test for bool first: http://www.peterbe.com/plog/bool-is-int
+        """ Convert values to bool if possible.
+
+        Convert any applicable values found in a .cfg file to the appropriate
+        boolean, if possible. Consult the code to see exactly what is
+        converted.
+
+        Always test for bool first: http://www.peterbe.com/plog/bool-is-int
+
+        Args:
+            value: The value to be converted.
+
+        Returns:
+            The value as a boolean.
+
+        """
         if isinstance(value, bool):
             return value
         if value.lower() in ["on", "yes", "true", "1"]:
