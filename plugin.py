@@ -22,7 +22,7 @@ class Plugin(object):
 
     __metaclass__ = ABCMeta
     requiredGenericParams = None
-    optionalGenericParams = None
+    optionalGenericParams = ["target"]
     requiredSpecificParams = None
     optionalSpecificParams = None
     commonParams = None
@@ -34,7 +34,7 @@ class Plugin(object):
         self.async = False
         self.params = {}
         if self.setallparams(config):
-            if (self.params["target"] == "internet") and not self.check_conn():
+            if ("target" in self.params and self.params["target"] == "internet") and not self.check_conn():
                 msg = "Skipping " + self.purpose + " plugin " + self.name
                 msg += " because no internet connectivity."
                 #msg = format_msg(msg, 'error')
@@ -45,11 +45,15 @@ class Plugin(object):
             msg = "Failed to set parameters for " + self.purpose + " plugin " + self.name
             print(msg)
             #logthis("error", msg)
-        if self.params["calibration"]:
+        print("about to check calibration")
+        if "calibration" in self.params and self.params["calibration"]:
             import sys
             sys.path.append(sys.path[0] + '/supports')
             from supports import calibration
             self.cal = calibration.Calibration.sharedClass
+        else:
+            self.params["calibration"] = False
+            self.cal = False
  
     def setallparams(self, config):
         """
@@ -95,8 +99,7 @@ class Plugin(object):
                 else:
                     if kind == "required":
                         msg = "Missing required parameter '" + param
-                        msg += "' for plugin " + self.name + "."
-                        print(msg)
+                        msg += "' for plugin " + self.name + "." + os.linesep
                         msg += "This should be found in the relevant .cfg file."
                         #msg = format_msg(msg, 'error')
                         print(msg)

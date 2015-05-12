@@ -18,7 +18,13 @@ class Calibration(support.Support):
 
     """
 
-    optionalSpecificParams = ["func_Light_Level", "func_Air_Quality", "func_Nitrogen_Dioxide", "func_Carbon_Monoxide", "func_Volume", "func_UVI", "func_Bucket_tips"]
+    optionalSpecificParams = ["func_Light_Level",
+                              "func_Air_Quality",
+                              "func_Nitrogen_Dioxide",
+                              "func_Carbon_Monoxide",
+                              "func_Volume",
+                              "func_UVI",
+                              "func_Bucket_tips"]
     sharedClass = None
 
     def __init__(self, config):
