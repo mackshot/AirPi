@@ -45,7 +45,6 @@ class Plugin(object):
             msg = "Failed to set parameters for " + self.purpose + " plugin " + self.name
             print(msg)
             #logthis("error", msg)
-        print("about to check calibration")
         if "calibration" in self.params and self.params["calibration"]:
             import sys
             sys.path.append(sys.path[0] + '/supports')
