@@ -11,7 +11,6 @@ parent class (Output), i.e. always returns True.
 """
 
 import output
-import calibration
 import requests
 import datetime
 

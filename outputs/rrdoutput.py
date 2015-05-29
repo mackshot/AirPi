@@ -72,7 +72,6 @@ This module is based on code by Francois Guillier, with permission
 import output
 import datetime
 import time
-import calibration
 import rrdtool
 
 class RRDOutput(output.Output):
