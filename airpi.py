@@ -1337,7 +1337,7 @@ if __name__ == '__main__':
     p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
     commit,err = p2.communicate()
     logthis('debug', "Git " + commit)
-    for theprocess in [p1,p2]:
+    for theprocess in [p1, p2]:
         if theprocess.stdin:
             theprocess.stdin.close()
         if theprocess.stdout:

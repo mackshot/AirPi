@@ -6,7 +6,6 @@ accurately, stdout). This does not include GPS or metadata.
 """
 
 import output
-import calibration
 
 class Dashboard(output.Output):
     """A module to print AirPi data to screen.

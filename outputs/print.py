@@ -108,7 +108,7 @@ class Print(output.Output):
             theoutput = theoutput[:-1]
             print(theoutput)
         else:
-            print("Time".ljust(17) + ": " + sampletime.strftime("%Y-%m-%d %H:%M:%S"))
+            print("Time".ljust(18) + ": " + sampletime.strftime("%Y-%m-%d %H:%M:%S"))
             for point in datapoints:
                 if point["name"] == "Location":
                     print(self.format_output_gps("Loc - Latitude",
@@ -117,7 +117,7 @@ class Print(output.Output):
                                                     point["longitude"], "deg"))
                     print(self.format_output_gps("Loc - Altitude",
                                                     point["altitude"], "m"))
-                    disp = (("Loc - Disp./Exp.").ljust(17)).replace("_", " ")
+                    disp = (("Loc - Disp./Exp.").ljust(18)).replace("_", " ")
                     disp += ": " + str(point["disposition"].title()) + ", "
                     disp += point["exposure"].title().ljust(8)
                     #TODO: Finish reverse geocode
@@ -126,7 +126,7 @@ class Print(output.Output):
                     print(disp)
                 else:
                     value = "{0:.2f}".format(point["value"])
-                    line = (point["name"].ljust(17)).replace("_", " ")
+                    line = (point["name"].ljust(18)).replace("_", " ")
                     line += ": " + str(value).rjust(10) + " "
                     line += point["symbol"].ljust(5) + "("
                     line += point["readingtype"] + ")"

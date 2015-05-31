@@ -1,17 +1,46 @@
 # AirPi
 
-A Raspberry Pi weather station and air quality monitor.
+Python support for the [AirPi](http://airpi.es), a Raspberry Pi weather station
+and air quality monitor add-on board. The AirPi hardware was conceived and
+produced by Alyssa Dayan and Tom Hartley.
 
-The AirPi was conceived and produced by Alyssa Dayan and Tom Hartley.
+## Installation
+Be sure to read the documentation in the `docs` folder first, and for more
+detailed instructions.
+### New Install
+The quickest way to install on a new Raspberry Pi is:
+1) Clone this repository: `git clone http://github.com/haydnw/airpi AirPi`
+2) Change to the AirPi directory: `cd AirPi`
+3) Run the install script: `sudo install.sh`
+### Upgrade Existing Install
+Upgrading will overwrite your existing settings files; save them first to preserve
+settings. To upgrade an existing install to the latest version:
+`git pull`
+### Usage
+`airpictl.sh normal`
+See the `docs` folder for instructions on using other run modes.
 
-For installation and usage instructions, see the files in the `docs` folder.
+## Bug Reports
+Bug reports should be submitted on [GitHub](https://github.com/haydnw/AirPi/issues).
++ Ensure you are running the latest verison of the software, as a fix for your
+problem may already have been implemented.
++ Try running the `development` branch of the repository, as a fix for your
+problem may be under development at the moment.
++ If you still need to report a bug, please include the current software version
+(run `airpictl.sh ver`). You should also run the software with `debug = yes` in
+the settings file (`cfg\settings.cfg`), and then include the last few lines of
+output in the bug report.
 
-Scroll down for information on previous software versions.
+## Support
+There is no formal support mechanism for the AirPi hardware, nor is there any implied or
+explicit support offered or in any way guaranteed for this fork of the software.
+You may, however, find the [AirPi discussion board](http://airpi.freeforums.net/board/1/general-board)
+a useful source of information.
 
-
-## This Version - [Haydn Williams](http://www.haydnwilliams.com)
-The following development has been carried out by 
-[Haydn Williams](http://github.com/haydnw/airpi):
+## This Fork - [Haydn Williams](http://www.haydnwilliams.com)
+Development on [this fork](http://github.com/haydnw/airpi) has been carried out
+by [Haydn Williams](http://www.haydnwilliams.com), with attribution for extra
+assistance in the code where appropriate.
 
 **2015-05-11:**
 + [FIX] No more error message when LDR is in complete darkness.

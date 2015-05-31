@@ -28,6 +28,14 @@ class Limits(support.Support):
 
     """
 
+    optionalSpecificParams = ["limit_Nitrogen_Dioxide",
+                              "limit_Carbon_Monoxide",
+                              "limit_Air_Quality",
+                              "limit_Relative_Humidity",
+                              "limit_Pressure",
+                              "limit_DHT22-Temperature",
+                              "limit_BMP085-Temperature"]
+
     def __init__(self, config):
         """Initialise.
 

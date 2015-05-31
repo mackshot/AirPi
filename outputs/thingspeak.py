@@ -1,6 +1,5 @@
 import output
 import requests
-import calibration
 
 class Thingspeak(output.Output):
 

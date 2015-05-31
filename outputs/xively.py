@@ -1,7 +1,6 @@
 import output
 import requests
 import json
-import calibration
 
 class Xively(output.Output):
     """

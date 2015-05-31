@@ -8,7 +8,6 @@ along with metadata (again, if present).
 
 import output
 import time
-import calibration
 
 class CSVOutput(output.Output):
     """A module to output data to a CSV file.

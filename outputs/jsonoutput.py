@@ -18,7 +18,6 @@ https://github.com/river-io/AirPi/blob/master/outputs/log.py
 
 import output
 import time
-import calibration
 
 class JSONOutput(output.Output):
     """A module to output AirPi data to a json file.

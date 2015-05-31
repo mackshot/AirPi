@@ -8,7 +8,6 @@ include GPS data.
 
 import os
 import output
-import calibration
 import ap
 
 class Plot(output.Output):

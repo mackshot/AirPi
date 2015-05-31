@@ -9,7 +9,6 @@ import re
 import csv
 import socket
 import output
-import calibration
 
 # useful resources:
 # http://unixunique.blogspot.co.uk/2011/06/simple-python-http-web-server.html

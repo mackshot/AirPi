@@ -84,12 +84,16 @@ class Analogue(sensor.Sensor):
             msg += str(self.adcpin)
             print(msg)
             return None
-        if result == 1023 and self.sensorname != "LDR":
-            msg = "Error: Check wiring for the " + self.sensorname
-            msg += " measurement, full voltage detected on ADC input "
-            msg += str(self.adcpin)
-            print(msg)
-            return None
+        if result == 1023:
+            if self.sensorname == "LDR":
+                # Carrying on with 1023 gives divide by zero error below
+                result = 1022
+            else:
+                msg = "Error: Check wiring for the " + self.sensorname
+                msg += " measurement, full voltage detected on ADC input "
+                msg += str(self.adcpin)
+                print(msg)
+                return None
         vout = float(result)/1023 * 3.3
 
         if self.pulldown != None:
