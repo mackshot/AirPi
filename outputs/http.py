@@ -44,7 +44,6 @@ class HTTP(output.Output):
 
     def __init__(self, config):
         super(HTTP, self).__init__(config)
-        print("done super")
         self.target = self.params["target"]
 
         if os.path.exists(self.params["wwwPath"]):
@@ -57,8 +56,6 @@ class HTTP(output.Output):
         else:
             self.port = 8080
 
-        print("starting history")
-        print(str(self.params))
         if "history" in self.params:
             if self.params["history"]:
                 if os.path.isfile(self.params["historyFile"]):
@@ -71,30 +68,25 @@ class HTTP(output.Output):
             else:
                 self.history = 0
             
-        print("done first bit")
         if "historySize" in self.params:
             self.historySize = int(self.params["historySize"])
         else:
             self.historySize = 2880
-        print("done second bit")
         if "historyInterval" in self.params:
             self.historyInterval = int(self.params["historyInterval"])
         else:
             self.historyInterval = 30
-        print("done third bit")
         if "historyCalibrated" in self.params:
             if self.params["historyCalibrated"]:
                 self.historyCalibrated = 1
-                self.cal = calibration.Calibration.sharedClass
             else:
                 self.historyCalibrated = 0
                 self.cal = []
         else:
             self.historyCalibrated = 0
-        print("starting hostname") 
+        
         hostname = self.gethostname()
 
-        print("starting title et al.")
         if "title" in self.params:
             if "<hostname>" in self.params["title"]:
                 self.title = self.params["title"].replace("<hostname>", hostname)
@@ -111,7 +103,6 @@ class HTTP(output.Output):
         else:
             self.about = "An AirPi weather station."
 
-        self.cal = calibration.Calibration.sharedClass
         self.sensorIds = []
         self.readingtypes = dict()
         self.historicData = []
