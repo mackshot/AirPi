@@ -24,6 +24,7 @@ class GpsController(threading.Thread):
             return super(GpsController, cls).__new__(cls)
         else:
             print("ERROR:   GPS does not appear to be set up.")
+            print("         Unable to find socket at /dev/ttyAMA0")
             print("         Try running: \"sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock\"")
             raise GpsSocketError
 

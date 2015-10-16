@@ -19,12 +19,13 @@ class serial_gps(sensor.Sensor):
 
         """
         self.sensorname = "MTK3339"
-        self.valName = "Location"
+        self.valname = "Location"
         global gpsc
         try:
             gpsc = GpsController.GpsController()
             gpsc.start()
         except Exception as e:
+            print("Unable to start GpsController")
             print("Exception:", e)
             raise
 
@@ -51,7 +52,7 @@ class serial_gps(sensor.Sensor):
         else:
             return (gpsc.fix.latitude, gpsc.fix.longitude, gpsc.fix.altitude, "fixed", "indoor")
 
-    def stopController(self):
+    def stopcontroller(self):
         """Stop the GPS controller.
 
         Stop the GPS controller we created for this sensor. Informing the user
