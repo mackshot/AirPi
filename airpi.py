@@ -457,9 +457,15 @@ def set_up_sensors():
                     reqd = sensorclass.requiredData
                 except Exception:
                     reqd = []
+                    msg = "Unable to determine required parameters for the sensor."
+                    msg = format_msg(msg, 'error')
+                    print(msg)
                 try:
                     opt = sensorclass.optionalData
                 except Exception:
+                    msg = "Unable to determine optional parameters for the sensor."
+                    msg = format_msg(msg, 'error')
+                    print(msg)
                     opt = []
                 # Sensors don't have any common params, so this is empty
                 common = []
@@ -471,7 +477,10 @@ def set_up_sensors():
                 try:
                     instclass = sensorclass(plugindata)
                 except Exception:
-                    msg = " GPS instance not created - socket not set up?"
+                    if "serial_gps" not in filename:
+                        msg = "Unable to set instclass for sensor using plugindata."
+                    else:
+                        msg = " GPS instance not created - socket not set up?"
                     msg = format_msg(msg, 'error')
                     LOGGER.error(msg)
                     raise
