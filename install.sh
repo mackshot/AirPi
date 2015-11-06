@@ -20,7 +20,7 @@ echo "====================================="
 echo "[AirPi] BEGINNING AIRPI INSTALLATION."
 echo "====================================="
 echo ""
-if whiptail --title "AirPi installation" --yes-button "Heck yes!" --no-button "Erm, no thanks" --yesno "This script installs the AirPi software from github.com/haydnw/AirPi onto your Raspberry Pi.
+if whiptail --title "AirPi installation" --yes-button " Heck yes! " --no-button " Erm, no thanks " --yesno "This script installs the AirPi software from github.com/haydnw/AirPi onto your Raspberry Pi.
 
 Please read the notes below before deciding whether you want to continue with the installation.
 
@@ -91,7 +91,7 @@ Start installing the AirPi software?" 18 100 ;then
 	echo "======================="
 	echo "[AirPi] SETUP COMPLETE."
 	echo "======================="
-	if whiptail --title "AirPi installation" --yes-button "Reboot now!" --no-button "Nah, later" --yesno "AirPi installation is complete.
+	if whiptail --title "AirPi installation" --yes-button " Reboot now! " --no-button " Nah, later " --yesno "AirPi installation is complete.
 
 You will need to reboot your Raspberry Pi before using the AirPi.
 
