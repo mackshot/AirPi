@@ -46,8 +46,9 @@ Start installing the AirPi software?" 18 100 ;then
 	echo "==========================================="
 	echo "[AirPi] INSTALLING NEW REQUIRED PACKAGES..."
 	echo "==========================================="
-	sudo apt-get -y install python-dev python-smbus python-setuptools python-requests python3-dev python3-requests libxml2-dev libxslt1-dev python-lxml i2c-tools
+	sudo apt-get -y install python-dev python-setuptools python-requests python3-dev python3-requests libxml2-dev libxslt1-dev python-lxml i2c-tools
 	echo ""
+        sudo apt-get -y install python-smbus
 
 	# Install Twitter support (not available via apt-get)
 	easy_install Twitter
