@@ -9,9 +9,10 @@ Be sure to read the documentation in the `docs` folder first, and for more
 detailed instructions.
 ### New Install
 The quickest way to install on a new Raspberry Pi is:
-1) Clone this repository: `git clone http://github.com/haydnw/airpi AirPi`
-2) Change to the AirPi directory: `cd AirPi`
-3) Run the install script: `sudo install.sh`
+`curl -s https://raw.githubusercontent.com/haydnw/airpi/master/install.sh | sudo sh`
+If you're scared about executing code straight from the internet (and you should be!)
+then you can view it first by doing this:
+`curl -s https://raw.githubusercontent.com/haydnw/airpi/master/install.sh | more`
 ### Upgrade Existing Install
 Upgrading will overwrite your existing settings files; save them first to preserve
 settings. To upgrade an existing install to the latest version:
