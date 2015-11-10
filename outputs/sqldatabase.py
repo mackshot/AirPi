@@ -1,9 +1,13 @@
 """A module to write AirPi data to a MySQL database.
 
 A module to write AirPi data to a MySQL database. The database must include
-fields named exactly the same as each sensor "name". Values recorded in the
-database do not have any units associated with them. There is no facility
-to include GPS data at this time.
+fields with the following names and types:
+Station       VARCHAR(20)
+Sample_Time   DATETIME
+Sensor        VARCHAR(25)
+Value         DOUBLE
+Unit          VARCHAR(25)
+There is no facility to include GPS data at this time.
 """
 
 import output
@@ -43,18 +47,16 @@ class sqlDatabase(output.Output):
             datapoints = self.cal.calibrate(datapoints)
         conn = MySQLdb.connect(host=self.params["host"],db=self.params["db"],user=self.params["user"],passwd=self.params["passwd"])
         curs = conn.cursor()
-        statement = "INSERT INTO obs (`Station`, `Sample_Time`"
+        statement = "INSERT INTO obs (`Station`, `Sample_Time`, `Sensor`, `Value`, `Unit`) VALUES "
         for point in datapoints:
-            if point["name"] == "Location":
-                print("No provision for GPS data in sqlDatabase plugin at this time")
+            if point["name"] != "Location":
+                statement += "(\"" + self.params["station"] + "\", \"" + str(sampletime) + "\", \"" + point["name"] + "\", " + str(point["value"]) + ", \"" + point["unit"] + "\")"
             else:
-                statement += ", `" + point["name"] + "`"
-                statement += ", `" + point["name"] + "_units`"
-        statement += ") VALUES (\"" + self.params["station"] + "\", \"" + str(sampletime) + "\""
-        for point in datapoints:
-            statement += ", " + str(point["value"])
-            statement += ", \"" + point["unit"] + "\""
-        statement += ");"
+                print("No provision for GPS data in sqlDatabase plugin at this time")
+            if len(datapoints) > 1:
+                statement += ","
+        statement = statement[:-1]
+        statement += ";"
         #print(statement)
         curs.execute(statement)
         if curs.rowcount == 0:
