@@ -43,6 +43,21 @@ Development on [this fork](http://github.com/haydnw/airpi) has been carried out
 by [Haydn Williams](http://www.haydnwilliams.com), with attribution for extra
 assistance in the code where appropriate.
 
+**2015-11-11:**
++ [NEW] Add line to instructions to get GPS working in Raspbian Jessie (thanks Sven!).
+
+**2015-11-09:**
++ [NEW] Add MySQL support to outputs.
+
+**2015-11-06:**
++ [FIX] Improvements to installation script and accompanying docs.
+
+**2015-10-16:**
++ [FIX] Various bug fixes and minor improvements to GPS support.
+
+**2015-05-12:**
++ [NEW] Improve code by making Support plugins sub-classes of Plugin object.
+
 **2015-05-11:**
 + [FIX] No more error message when LDR is in complete darkness.
 + [FIX] Calibration now fully working.

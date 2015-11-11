@@ -95,6 +95,7 @@ be correct.
 1.  [OPTIONAL] Enable GPS, then check it works:
 	```shell
         sudo apt-get install gpsd gpsd-clients python-gps
+        sudo sed -i 's/DEVICES=""/DEVICES="/dev/ttyAMA0"/g' /etc/default/gpsd
 	sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock
 	cgps -s
 	```
