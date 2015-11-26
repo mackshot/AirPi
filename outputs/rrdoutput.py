@@ -83,24 +83,13 @@ class RRDOutput(output.Output):
 
     """
 
-    #TODO: Delete these
-    requiredParams = ["target", "outputDir", "outputFile"]
-    optionalParams = ["calibration", "metadata"]
-
     requiredSpecificParams = ["outputDir", "outputFile"]
 
-    def __init__(self, params):
-        if "<date>" in params["outputFile"]:
-            filenamedate = time.strftime("%Y%m%d-%H%M")
-            params["outputFile"] = \
-                params["outputFile"].replace("<date>", filenamedate)
-        if "<hostname>" in params["outputFile"]:
-            params["outputFile"] = \
-                params["outputFile"].replace("<hostname>", self.gethostname())
+    def __init__(self, config):
+        super(RRDOutput, self).__init__(config)
         # open the file persistently for append
-        self.filename = params["outputDir"] + "/" + params["outputFile"]
-        #self.file = open(self.filename, "a")
-        super(RRDOutput, self).__init__(params)
+        self.filename = self.params["outputDir"] + "/" + self.params["outputFile"]
+        self.file = open(self.filename, "a")
 
     def output_data(self, datapoints, sampletime):
         """Output data.
@@ -125,47 +114,18 @@ class RRDOutput(output.Output):
         """
         if self.params["calibration"]:
             datapoints = self.cal.calibrate(datapoints)
-        print("writing file")
         names = []
         data = [str(int(time.time()))]
         for point in datapoints:
             if point["name"] != "Location":
                 names.append(point["name"].replace(' ', '_'))
                 data.append(str(point["value"]))
-        print(':'.join(names), ":".join(data))
+        #print("Data to be written is:")
+        #print(':'.join(names), ":".join(data))
         try:
-            print("writing file")
-            print(rrdtool.update(self.filename, '-t', ':'.join(names), ":".join(data)))
-            print("file written")
+            print("[" + time.strftime("%H:%M:%S") + "] Writing to RRD file...")
+            rrdtool.update(self.filename, '-t', ':'.join(names), ":".join(data))
+            print(time.strftime("[%H:%M:%S]") + " ... RRD file written.")
         except Exception as theexception:
             print(str(theexception))
         return True
-
-    def output_coda(self):
-        rrdtool graph self.filename + '.png' \
-            --imgformat 'PNG' \
-            --title "AirPi Output" \
-            --watermark "N.B. Some values may be too small to display accurately on the graph." \
-            --vertical-label "Value" \
-            --width '1000' \
-            --height '800' \
-            --start now-6000s \
-            --end now-5920s \
-            'DEF:Temp-BMP=' + self.filename + '.rrd:Temp-BMP:AVERAGE' \
-            'DEF:Pressure=' + self.filename + '.rrd:Pressure:AVERAGE' \
-            'DEF:Hum=' + self.filename + '.rrd:Relative_Humidity:AVERAGE' \
-            'DEF:Temp-DHT=' + self.filename + '.rrd:Temp-DHT:AVERAGE' \
-            'DEF:Light=' + self.filename + '.rrd:Light_Level:AVERAGE' \
-            'DEF:NO2=' + self.filename + '.rrd:Nitrogen_Dioxide:AVERAGE' \
-            'DEF:CO=' + self.filename + '.rrd:Carbon_Monoxide:AVERAGE' \
-            'DEF:AQ=' + self.filename + '.rrd:Air_Quality:AVERAGE' \
-            'DEF:Vol=' + self.filename + '.rrd:Volume:AVERAGE' \
-            'LINE1:Temp-BMP#0099CC:Temperature-BMP (C))' \
-            'LINE1:Pressure#0099CC:Pressure (hPa)' \
-            'LINE1:Hum#993399:Relative Humidity (%)' \
-            'LINE1:Temp-DHT#0099CC:Temperature-DHT (C))' \
-            'LINE1:Light#66FF33:Light (Ohms)' \
-            'LINE1:NO2#3366CC:Nitrogen Dioxide (Ohms)' \
-            'LINE1:CO#FF9966:Carbon Monoxide (Ohms)' \
-            'LINE1:AQ#CC33FF:Air Quality / VOCs (Ohms)' \
-            'LINE1:Vol#999966:Volume (Ohms)'
