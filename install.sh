@@ -43,10 +43,11 @@ Start installing the AirPi software?" 18 100 ;then
 	echo ""
 
 	# Install required packages using apt-get
+        # Note that git is in the list because it's not included in Jessie Lite
 	echo "==========================================="
 	echo "[AirPi] INSTALLING NEW REQUIRED PACKAGES..."
 	echo "==========================================="
-	sudo apt-get -y install python-dev python-setuptools python-requests python3-dev python3-requests libxml2-dev libxslt1-dev python-lxml i2c-tools
+	sudo apt-get -y install python-dev python-setuptools python-requests python3-dev python3-requests libxml2-dev libxslt1-dev python-lxml i2c-tools git
 	echo ""
         sudo apt-get -y install python-smbus
 
@@ -87,6 +88,19 @@ Start installing the AirPi software?" 18 100 ;then
 	echo "==========================================="
 	echo ""
 
+        # Install GPS support
+        if whiptail --title "AirPi installation" --yes-button " GPS please " --no-button " No thanks " --yesno "Would you like to install GPS support?" 18 100 ; then
+            sudo apt-get install gpsd gpsd-clients python-gps
+            sudo sed -i 's/DEVICES=""/DEVICES="/dev/ttyAMA0"/g' /etc/default/gpsd
+            whiptail --title "AirPi installation" --msgbox "GPS support has been installed.
+
+Note that after a reboot you will need to run the following command to start the GPS service on your Raspberry Pi:
+sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock
+
+You can then run this command to check that the GPS is working:
+cgps -s" 18 100
+        fi
+
 	# Let the user know the score
 	echo "======================="
 	echo "[AirPi] SETUP COMPLETE."
@@ -96,11 +110,10 @@ Start installing the AirPi software?" 18 100 ;then
 You will need to reboot your Raspberry Pi before using the AirPi.
 
 Have fun!  :)" 18 100 ; then
-        sudo reboot
+       	    sudo reboot
+        else
+            echo "[AirPi] Installation complete. Will not reboot."
+        fi
     else
-        echo "[AirPi] Installation complete. Will not reboot."
+        echo "[AirPi] Installation aborted. You can stop panicking now."
     fi
-
-else
-    echo "[AirPi] Installation aborted. You can stop panicking now."
-fi

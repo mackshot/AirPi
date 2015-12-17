@@ -10,8 +10,10 @@ detailed instructions.
 ### New Install
 The quickest way to install on a new Raspberry Pi is:
 `curl -s https://raw.githubusercontent.com/haydnw/airpi/master/install.sh | sudo sh`
+
 If you're scared about executing code straight from the internet (and you should be!)
 then you can view it first by doing this:
+
 `curl -s https://raw.githubusercontent.com/haydnw/airpi/master/install.sh | more`
 ### Upgrade Existing Install
 Upgrading will overwrite your existing settings files; save them first to preserve
@@ -19,6 +21,7 @@ settings. To upgrade an existing install to the latest version:
 `git pull`
 ### Usage
 `airpictl.sh normal`
+
 See the `docs` folder for instructions on using other run modes.
 
 ## Bug Reports
@@ -42,6 +45,10 @@ a useful source of information.
 Development on [this fork](http://github.com/haydnw/airpi) has been carried out
 by [Haydn Williams](http://www.haydnwilliams.com), with attribution for extra
 assistance in the code where appropriate.
+
+**2015-12-17:**
++ [NEW] Install Git if not already present (for Raspbian Jessie Lite).
++ [NEW] Install GPS packages as part of installation script, if requested by user.
 
 **2015-11-11:**
 + [NEW] Add line to instructions to get GPS working in Raspbian Jessie (thanks Sven!).
