@@ -9,6 +9,7 @@ Be sure to read the documentation in the `docs` folder first, and for more
 detailed instructions.
 ### New Install
 The quickest way to install on a new Raspberry Pi is:
+
 `curl -s https://raw.githubusercontent.com/haydnw/airpi/master/install.sh | sudo sh`
 
 If you're scared about executing code straight from the internet (and you should be!)
