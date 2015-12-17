@@ -18,7 +18,11 @@ class Calibration(support.Support):
 
     """
 
-    optionalSpecificParams = ["func_Light_Level",
+    optionalSpecificParams = ["func_Temperature-BMP",
+                              "func_Temperature-DHT",                             
+                              "func_Relative_Humidity",
+                              "func_Pressure",
+                              "func_Light_Level",
                               "func_Air_Quality",
                               "func_Nitrogen_Dioxide",
                               "func_Carbon_Monoxide",
