@@ -19,8 +19,8 @@ class Xively(output.Output):
         self.feedid = self.params["feedid"]
         if "proxyhttp" in self.params and "proxyhttps" in self.params:
             self.proxies = {
-                          http: self.params["proxyhttp"],
-                          https: self.params["proxyhttps"]
+                          "http": self.params["proxyhttp"],
+                          "https": self.params["proxyhttps"]
             }
 
     def output_data(self, dataPoints, dummy):
