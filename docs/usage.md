@@ -292,40 +292,6 @@ The following options are common to a number of output plugins:
 + `target` specifies where the output plugin sends data to. Should be `screen`,
   `internet`, `file`, or `support`.
 
-**\[Calibration\]**  
-*Change raw data by applying custom functions.*
-##############################################################################
-# DO NOT ASSUME ANY PRE-DEFINED FUNCTIONS BELOW ARE CORRECT!                 #
-# EVERY SENSOR IS DIFFERENT SO YOU CAN'T JUST COPY SOMEONE ELSE'S FUNCTIONS! #
-# THE ONLY WAY TO ACCURATELY CONVERT ANY RESISTANCE TO AN ABSOLUTE VALUE SUCH#
-# AS PPM IS TO CALIBRATE YOUR OWN SENSOR AGAINST A KNOWN 'GOOD' SENSOR/METER # 
-# IN SEVERAL KNOWN CONCENTRATIONS OF THE TARGET GAS, THEN USE THE KNOWN      #
-# 'GOOD' READINGS TO DETERMINE THE CORRECTION FUNCTION FOR YOUR AIRPI.       #
-##############################################################################
-This plugin applies a function to raw data obtained from sensors, with the aim
-of allowing the correction of erroneous data via offsets, or conversion from one unit to
-another. For calibration to work you must define a function for the
-relevant sensor plugin and then enable calibration within the options for the
-output plugin where calibration should be applied.
-To define a calibration function, use the following syntax:
-```
-func_<sensor_name> = <function>,<units>
-```
-Where:
-+ `<sensor_name>` is the name of the sensor metric to which the calibration should be
-  applied. Note that the *name* is different from the *sensor*. You can obtain the name by
-  switching debug ON in `cfg/settings.cfg` and looking at the details as the sensor
-  is initialised at the start of the run.
-+ `<function>` is the correction function which should be applied to the raw
-  data. Use the letter `x` to represent the raw data (*e.g.* the function `2*x`
-  would double the raw value).
-+ `<units>` is the name of the units in which the corrected data is measured.
-
-Example: reduce temperature from BMP085 sensor by 3 degrees Celcius:
-```
-func_Temperature-BMP = x-3,Corrected Deg C
-```
-
 **\[Print\]**  
 *Print details to screen.*  
 Print data to [stdout](http://en.wikipedia.org/wiki/Standard_streams#Standard_output_.28stdout.29),
@@ -385,6 +351,18 @@ print the sensor names to facilitate their duplication in Xicely.
 Output information to a feed on the Dweet website.
 + `thing` is the name under which the feed will be posted on the Dweet website.
 
+**\[Thingspeak\]**
+*Output information to a [Thingspeak](https://thingspeak.com) feed.*
+Output information to a feed on the Thingspeak website.
++ `apikey` is the API key used to define the target feed on Thingspeak.
+
+**\[Ubidots\]**
+*Output information to an [Ubidots](http://ubidots.com) feed.*
+Output information to a feed on the Ubidots website.
++ `token` is the Ubidots account token.
++ `ID-<sensor>` is the Ubidots feed ID for each individual metric.
++ `showcost` determines whether to show the cost of each upload.
+
 **\[RRDOutput\]**  
 *Save information to an [RRD](http://oss.oetiker.ch/rrdtool/) database.*  
 Save information on a rotating basis to a Round-Robin Database (RRD) file. RRD
@@ -401,6 +379,84 @@ the sensor names to facilitate entry of the correct name in this section. If
 this plugin is enabled at the same time as the `[print]` plugin, this plugin will
 be automatically disabled (you can only display one thing at a time on screen!).
 + `metric` is the name of the sensor whose data should be plotted.
+
+**\[sqldatabase\]**
+*Output information to a MySQL database.*
+Output all information except GPS to a MySQL database. The database must include
+the following field names/types:
+```
+Station       VARCHAR(20)
+Sample_Time   DATETIME
+Sensor        VARCHAR(25)
+Value         DOUBLE
+Unit          VARCHAR(25)
+```
+See [this link for a script](http://airpi.freeforums.net/post/1127/thread)
+to create an appropriate database.
++ `station` is the name of the AirPi station/location.
++ `host` is the hostname of the machine where the MySQL database sits.
++ `db` is the name of the database on the MySQL host.
++ `user` is the username for connecting to the database.
++ `passwd` is the password for connecting to the database.
+If your data is top secret / mission critical then please note that the password
+for the database is just held in plain text and is therefore visible to anyone
+who can access your AirPi files. There is no encryption on the password or data
+if sent to a MySQL host on a different machine.
+
+**\[Dashboard\]**
+*Show limit breach information on screen.*
+User green and red on screen to represent whether limits defined using the \'limits\'
+support plugin have been breached or not. All limits are defined using the \'limits\'
+support plugin; this output plugin therefore has no options. This output plugin
+will not work if the \'limits\' support plugin is not enabled, or doesn\'t have any
+limits set.
+
+## Pre-defined Supports
+
+**\[Calibration\]**
+*Change raw data by applying custom functions.*
+
+# DO NOT ASSUME ANY PRE-DEFINED FUNCTIONS BELOW ARE CORRECT!                 #
+# EVERY SENSOR IS DIFFERENT SO YOU CAN'T JUST COPY SOMEONE ELSE'S FUNCTIONS! #
+# THE ONLY WAY TO ACCURATELY CONVERT ANY RESISTANCE TO AN ABSOLUTE VALUE SUCH AS PPM IS TO CALIBRATE YOUR OWN SENSOR AGAINST A KNOWN 'GOOD' SENSOR/METER IN SEVERAL KNOWN CONCENTRATIONS OF THE TARGET GAS, THEN USE THE KNOWN 'GOOD' READINGS TO DETERMINE THE CORRECTION FUNCTION FOR YOUR AIRPI. 
+
+This plugin applies a function to raw data obtained from sensors, with the aim
+of allowing the correction of erroneous data via offsets, or conversion from one unit to
+another. For calibration to work you must define a function for the
+relevant sensor plugin and then enable calibration within the options for the
+output plugin where calibration should be applied.
+To define a calibration function, use the following syntax:
+```
+func_<sensor_name> = <function>,<units>
+```
+Where:
++ `<sensor_name>` is the name of the sensor metric to which the calibration should be
+  applied. Note that the *name* is different from the *sensor*. You can obtain the name by
+  switching debug ON in `cfg/settings.cfg` and looking at the details as the sensor
+  is initialised at the start of the run.
++ `<function>` is the correction function which should be applied to the raw
+  data. Use the letter `x` to represent the raw data (*e.g.* the function `2*x`
+  would double the raw value).
++ `<units>` is the name of the units in which the corrected data is measured.
+
+Example: reduce temperature from BMP085 sensor by 3 degrees Celcius:
+```
+func_Temperature-BMP = x-3,Corrected Deg C
+```
+
+**\[Limits\]**
+This plugin allows you to set an upper limit for sensor readings. If a reading
+is higher than the defined limit, and warning will be shown. Note that the
+style of the warning is determined entirely by the output plugins being used at the time;
+this plugin does not handle actually making the warnings, it merely reports whether or
+not the limits have been breached.
++ `limit_Nitrogen_Dioxide` is the upper limit for NO2.
++ `limit_Carbon_Monoxide` is the upper limit for CO.
++ `limit_Air_Quality` is the upper limit for Air Quality.
++ `limit_Relative_Humidity` is the upper limit for Relative Humidity.
++ `limit_Pressure` is the upper limit for barometric Pressure.
++ `limit_DHT22-Temperature` is the upper limit for temperature on the DHT22 sensor.
++ `limit_BMP085-Temperature` is the upper limit for temperature on the BMP085 sensor.
 
 ## <a id="notifications"></a>Pre-defined Notifications
 Notification plugins are defined in the `notifications.cfg` file, which can be found in the
