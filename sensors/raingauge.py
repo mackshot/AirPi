@@ -74,11 +74,13 @@ class Raingauge(sensor.Sensor):
         self.rain = 0
         return rain
 
-    def buckettip(self):
+    def buckettip(channel, self):
         """Record a bucket tip.
 
-        Record a bucket tip.
+        Record a bucket tip. Note that "channel" must always be passed to this
+        function, for reasons which aren't particularly clear in the docs:
+        http://raspi.tv/2013/how-to-use-interrupts-with-python-on-the-raspberry-pi-and-rpi-gpio-part-3#comment-18986
+        http://sourceforge.net/p/raspberry-gpio-python/wiki/Inputs/
 
         """
         self.rain += 1
-
