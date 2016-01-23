@@ -320,6 +320,7 @@ Where:
   data. Use the letter `x` to represent the raw data (*e.g.* the function `2*x`
   would double the raw value).
 + `<units>` is the name of the units in which the corrected data is measured.
+
 Example: reduce temperature from BMP085 sensor by 3 degrees Celcius:
 ```
 func_Temperature-BMP = x-3,Corrected Deg C
