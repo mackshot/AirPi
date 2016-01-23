@@ -293,7 +293,15 @@ The following options are common to a number of output plugins:
   `internet`, `file`, or `support`.
 
 **\[Calibration\]**  
-*Change raw data by applying custom functions.*  
+*Change raw data by applying custom functions.*
+##############################################################################
+# DO NOT ASSUME ANY PRE-DEFINED FUNCTIONS BELOW ARE CORRECT!                 #
+# EVERY SENSOR IS DIFFERENT SO YOU CAN'T JUST COPY SOMEONE ELSE'S FUNCTIONS! #
+# THE ONLY WAY TO ACCURATELY CONVERT ANY RESISTANCE TO AN ABSOLUTE VALUE SUCH#
+# AS PPM IS TO CALIBRATE YOUR OWN SENSOR AGAINST A KNOWN 'GOOD' SENSOR/METER # 
+# IN SEVERAL KNOWN CONCENTRATIONS OF THE TARGET GAS, THEN USE THE KNOWN      #
+# 'GOOD' READINGS TO DETERMINE THE CORRECTION FUNCTION FOR YOUR AIRPI.       #
+##############################################################################
 This plugin applies a function to raw data obtained from sensors, with the aim
 of allowing the correction of erroneous data via offsets, or conversion from one unit to
 another. For calibration to work you must define a function for the
@@ -301,15 +309,21 @@ relevant sensor plugin and then enable calibration within the options for the
 output plugin where calibration should be applied.
 To define a calibration function, use the following syntax:
 ```
-<sensor_name> = <function>,<units>
+func_<sensor_name> = <function>,<units>
 ```
 Where:
-+ `<sensor_name>` is the name of the sensor to which the calibration should be
-  applied.
++ `<sensor_name>` is the name of the sensor metric to which the calibration should be
+  applied. Note that the *name* is different from the *sensor*. You can obtain the name by
+  switching debug ON in `cfg/settings.cfg` and looking at the details as the sensor
+  is initialised at the start of the run.
 + `<function>` is the correction function which should be applied to the raw
   data. Use the letter `x` to represent the raw data (*e.g.* the function `2*x`
   would double the raw value).
 + `<units>` is the name of the units in which the corrected data is measured.
+Example: reduce temperature from BMP085 sensor by 3 degrees Celcius:
+```
+func_Temperature-BMP = x-3,Corrected Deg C
+```
 
 **\[Print\]**  
 *Print details to screen.*  
