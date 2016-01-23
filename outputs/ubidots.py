@@ -30,7 +30,8 @@ class Ubidots(output.Output):
                       "ID-TGS2600",
                       "ID-MiCS-2710",
                       "ID-MiCS-5525",
-                      "ID-Microphone"
+                      "ID-Microphone",
+                      "ID-Raingauge"
                       ]
 
     def __init__(self, config):
