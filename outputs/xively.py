@@ -50,11 +50,13 @@ class Xively(output.Output):
             dataPoints = self.cal.calibrate(dataPoints)
         arr = []
         for i in dataPoints:
-            # handle GPS data
             if i["name"] == "Location":
-                arr.append({"location": {"disposition": i["Disposition"], "ele": i["Altitude"], "exposure": i["Exposure"], "domain": "physical", "lat": i["Latitude"], "lon": i["Longitude"]}})
-            if i["value"] != None: #this means it has no data to upload.
-                arr.append({"id":i["name"], "current_value":round(i["value"], 2)})
+                arr.append({"location": {"disposition": i["disposition"], "exposure": i["exposure"], "domain": "physical", "lat": i["latitude"], "lon": i["longitude"]}})
+                if "altitude" in i:
+                    arr.append({"ele": i["altitude"]})
+            else:
+                if i["value"] != None:
+                    arr.append({"id":i["name"], "current_value":round(i["value"], 2)})
         a = json.dumps({"version":"1.0.0", "datastreams":arr})
         try:
             if self.proxies is None:
