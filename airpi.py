@@ -205,9 +205,9 @@ def set_cfg_paths():
 
     """
     cfgpaths = {}
-    basedir = os.path.abspath('.')
-    if basedir == "/":
-        basedir = "/home/pi/AirPi"
+    """basedir = os.path.abspath('.')
+    if basedir == "/":"""
+    basedir = "/home/pi/AirPiHaydnw"
     cfgdir = os.path.join(basedir, 'cfg')
     cfgpaths['settings'] = os.path.join(cfgdir, 'settings.cfg')
     cfgpaths['sensors'] = os.path.join(cfgdir, 'sensors.cfg')

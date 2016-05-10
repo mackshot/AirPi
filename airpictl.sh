@@ -10,7 +10,8 @@
 # =============================================================================
 
 # Set variables
-DIR=`pwd`
+DIR=/home/pi/AirPiHaydnw/
+LOGDIR=/var/log/airpi
 RUNDATE=`date +"%Y%m%d-%H%M"`
 HOST=`hostname`
 OUTPUT=$HOST-$RUNDATE.out
@@ -43,16 +44,16 @@ case $1 in
     bg)
         echo "[AirPi] Starting BACKGROUND AirPi sampling."
         echo "[AirPi] This run will end if you log out."
-        echo "[AirPi] Saving screen output to $DIR/log/$OUTPUT."
+        echo "[AirPi] Saving screen output to $LOGDIR/$OUTPUT."
         echo "[AirPi] To stop sampling, run: 'sudo ./airpictl.sh stop'"
-        sudo python $DIR/airpi.py > $DIR/log/$OUTPUT &
+        sudo python $DIR/airpi.py > $LOGDIR/$OUTPUT &
         ;;
     unatt)
         echo "[AirPi] Starting UNATTENDED AirPi sampling."
         echo "[AirPi] This run will continue even if you log out."
-        echo "[AirPi] Saving screen output to $DIR/log/$OUTPUT."
+        echo "[AirPi] Saving screen output to $LOGDIR/$OUTPUT."
         echo "[AirPi] To stop sampling, run: 'sudo ./airpictl.sh stop'"
-        nohup sudo python $DIR/airpi.py > $DIR/log/$OUTPUT &
+        nohup sudo python $DIR/airpi.py > $LOGDIR/$OUTPUT &
         ;;
     stop)
         if `ps aux | grep -v "grep" | grep -q "sudo.*airpi.py"`; then
