@@ -18,6 +18,8 @@ OUTPUT=$HOST-$RUNDATE.out
 
 clear;
 
+cd $DIR
+
 # Check whether anything is already running
 if `ps aux | grep -v "grep" | grep -q "sudo.*airpi.py"`; then
     case $1 in
