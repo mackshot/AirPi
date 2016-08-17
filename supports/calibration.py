@@ -28,7 +28,9 @@ class Calibration(support.Support):
                               "func_Carbon_Monoxide",
                               "func_Volume",
                               "func_UVI",
-                              "func_Bucket_tips"]
+                              "func_Bucket_tips",
+                              "func_Rotations",
+                              "func_WindDirection"]
     sharedClass = None
 
     def __init__(self, config):

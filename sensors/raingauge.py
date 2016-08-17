@@ -44,7 +44,7 @@ class Raingauge(sensor.Sensor):
         self.pinnum = int(data["pinnumber"])
         GPIO.setup(self.pinnum, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.pinnum, GPIO.FALLING, callback=self.buckettip, bouncetime=300)
-        self.rain = 0
+        self.rain = 0.0000001
         self.sensorname = "Raingauge"
         self.readingtype = "pulseCount"
         self.valname = "Bucket_tips"
@@ -70,11 +70,12 @@ class Raingauge(sensor.Sensor):
             float The current value for the sensor.
 
         """
+
         rain = self.rain
-        self.rain = 0
+        self.rain = 0.0000001
         return rain
 
-    def buckettip(channel, self):
+    def buckettip(self, channel):
         """Record a bucket tip.
 
         Record a bucket tip. Note that "channel" must always be passed to this
@@ -83,4 +84,5 @@ class Raingauge(sensor.Sensor):
         http://sourceforge.net/p/raspberry-gpio-python/wiki/Inputs/
 
         """
-        self.rain += 1
+        self.rain += 1.0
+        print("rain",self.rain,self.pinnum)

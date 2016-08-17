@@ -29,9 +29,15 @@ class Anemometer(sensor.Sensor):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         self.pinnum = int(data["pinnumber"])
+        self.rotations = 0.00000001
         GPIO.setup(self.pinnum, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.pinnum, GPIO.FALLING, callback=self.rotate, bouncetime=300)
-        self.rotations = 0.0000001
+#        GPIO.setup(self.pinnum, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#        GPIO.setup(self.pinnum, GPIO.IN)
+#        GPIO.add_event_detect(self.pinnum, GPIO.RISING, callback=self.rotateOn)
+#        GPIO.add_event_detect(self.pinnum, GPIO.FALLING, callback=self.rotate, bouncetime=100)
+        GPIO.add_event_detect(self.pinnum, GPIO.FALLING, callback=self.rotate, bouncetime=100)
+#        GPIO.add_event_detect(self.pinnum, GPIO.RISING, callback=self.rotate, bouncetime=300)
+#        GPIO.add_event_detect(self.pinnum, GPIO.BOTH, callback=self.rotate, bouncetime=300)
         self.sensorname = "Anemometer"
         self.readingtype = "pulseCount"
         self.valname = "Rotations"
@@ -71,4 +77,6 @@ class Anemometer(sensor.Sensor):
         http://sourceforge.net/p/raspberry-gpio-python/wiki/Inputs/
 
         """
-        self.rotations += 1.0
+
+        self.rotations += 1
+        print("rotate",self.rotations,self.pinnum)

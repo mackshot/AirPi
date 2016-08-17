@@ -7,6 +7,7 @@ either Ohms or millivolts depending on the exact sensor in question.
 """
 import mcp3008
 import sensor
+import time
 
 class Analogue(sensor.Sensor):
     """ The MCP3008 ADC is used by this class, and output can be in
@@ -77,7 +78,25 @@ class Analogue(sensor.Sensor):
             None If there is potentially an error with the data.
 
         """
+        """
+        result = 0.0
+        readings = 0.0
+        readingsc = 0.0
+        for i in range(0, 3):
+            reading = self.adc.readadc(self.adcpin)
+            if (reading != 0 and reading != 1023):
+                readings = readings + reading
+                readingsc = readingsc + 1
+            time.sleep(0.5)
+        if readingsc == 0:
+        """
+
         result = self.adc.readadc(self.adcpin)
+
+        """
+        else:
+            result = readings / readingsc
+        """
         if result == 0:
             msg = "Error: Check wiring for the " + self.sensorname
             msg += " measurement, no voltage detected on ADC input "
@@ -96,6 +115,9 @@ class Analogue(sensor.Sensor):
                 return None
         vout = float(result)/1023 * 3.3
 
+        if self.sensorname == "WindDirection":
+            return self.getWindDirection(self.pullup / ((self.sensorvoltage / vout) - 1))
+
         if self.pulldown != None:
             resout = (self.pulldown * self.sensorvoltage) / vout - self.pulldown
         elif self.pullup != None:
@@ -103,3 +125,17 @@ class Analogue(sensor.Sensor):
         else:
             resout = vout * 1000
         return resout
+
+    def getWindDirection(self, ohm):
+        directions = { 9700: 22.5, 12450: 45, 1185: 67.5, 1390: 90, 980: 112.5, 3200: 135, 1990: 157.5, 5680: 180, 4600: 202.5, 25000: 225, 21800: 247.5, 385000: 270, 76000: 292.5, 133000: 315, 35000: 337.5, 56500: 360 }
+
+        bestDiff = 1000000
+        bestVal = 0
+
+        for key, value in directions.iteritems():
+            diff = abs(key - ohm)
+            if diff < bestDiff:
+                bestDiff = diff
+                bestVal = value
+
+        return bestVal
