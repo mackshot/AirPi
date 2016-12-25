@@ -28,6 +28,9 @@ class Calibration(support.Support):
                               "func_Carbon_Monoxide",
                               "func_Volume",
                               "func_UVI",
+                              "func_Lux-TSL2561",
+                              "func_UVI-SI1145",
+			      "func_Dust",
                               "func_Bucket_tips",
                               "func_Rotations",
                               "func_WindDirection"]

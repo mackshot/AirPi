@@ -53,14 +53,17 @@ class Dweet(output.Output):
         req = None
         for point in datapoints:
             if point["name"] != "Location":
-                data[point["name"].replace(" ", "_")] = round(point["value"],
-                                                                2)
+                data[point["name"].replace(" ", "_")] = round(point["value"], 2)
+
         try:
-            req = requests.get("https://dweet.io/dweet/for/" + self.params["thing"],
-                                params=data)
+	    url = "https://dweet.io:443/dweet/for/" + self.params["thing"]
+            #req = requests.get(url, params=data)
+            req = requests.post(url, data=data)
             print("[" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "] Successfully dweeted.")
         except Exception as e:
             print("ERROR: Did not dweet successfully.")
+	    print(url)
+	    print(data)
             print("ERROR: " + str(e))
             return False
         response = req.json()

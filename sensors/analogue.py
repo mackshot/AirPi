@@ -8,6 +8,9 @@ either Ohms or millivolts depending on the exact sensor in question.
 import mcp3008
 import sensor
 import time
+import operator
+import dustBackend
+import microphone
 
 class Analogue(sensor.Sensor):
     """ The MCP3008 ADC is used by this class, and output can be in
@@ -15,7 +18,7 @@ class Analogue(sensor.Sensor):
 
     """
     requiredData = ["adcpin", "measurement", "sensorname"]
-    optionalData = ["pullupResistance", "pulldownResistance", "sensorvoltage", "description"]
+    optionalData = ["pullupResistance", "pulldownResistance", "sensorvoltage", "description", "averagingAttemps", "averagingTimeout", "averagingMethod", "digpin"]
 
     def __init__(self, data):
         """Initialise.
@@ -32,6 +35,18 @@ class Analogue(sensor.Sensor):
         self.adcpin = int(data["adcpin"])
         self.valname = data["measurement"]
         self.sensorname = data["sensorname"]
+        self.digpin = 0
+        if "digpin" in data:
+            self.digpin = int(data["digpin"])
+        self.averagingAttemps = 0
+        if "averagingAttemps" in data:
+            self.averagingAttemps = int(data["averagingAttemps"])
+        self.averagingTimeout = 0.0
+        if "averagingTimeout" in data:
+            self.averagingTimeout = float(data["averagingTimeout"])
+        self.averagingMethod = "avg"
+        if "averagingMethod" in data:
+            self.averagingMethod = data["averagingMethod"]
         self.readingtype = "sample"
         self.pullup, self.pulldown = None, None
         if "pullupResistance" in data:
@@ -39,7 +54,7 @@ class Analogue(sensor.Sensor):
         if "pulldownResistance" in data:
             self.pulldown = int(data["pulldownResistance"])
         if "sensorvoltage" in data:
-            self.sensorvoltage = int(data["sensorvoltage"])
+            self.sensorvoltage = float(data["sensorvoltage"])
         else:
             self.sensorvoltage = 3.3
 
@@ -78,25 +93,40 @@ class Analogue(sensor.Sensor):
             None If there is potentially an error with the data.
 
         """
-        """
-        result = 0.0
-        readings = 0.0
-        readingsc = 0.0
-        for i in range(0, 3):
-            reading = self.adc.readadc(self.adcpin)
-            if (reading != 0 and reading != 1023):
-                readings = readings + reading
-                readingsc = readingsc + 1
-            time.sleep(0.5)
-        if readingsc == 0:
-        """
-
-        result = self.adc.readadc(self.adcpin)
-
-        """
+        
+        if self.averagingAttemps > 1:
+            result = 0.0
+            readings = 0.0
+            readingsc = 0.0
+	    readings_array = {}
+            for i in range(0, self.averagingAttemps):
+                reading = self.getReading()
+                if (reading != 0 and reading != 1023):
+                    if self.averagingMethod == "max":
+                        if reading > readings:
+			    """print(str(reading) + " higher as " + str(readings))"""
+                            readings = reading
+                    else:
+                        readings = readings + reading
+                    readingsc = readingsc + 1
+		    if reading in readings_array:
+		        readings_array[reading] = readings_array[reading] + 1
+		    else:
+			readings_array[reading] = 1
+                time.sleep(self.averagingTimeout)
+            if readingsc == 0:
+                result = self.getReading()
+            else:
+		if self.averagingMethod == "most":
+		    sorted_x = sorted(readings_array.items(), key=operator.itemgetter(1), reverse=True)
+		    result = sorted_x[0][0]
+                elif self.averagingMethod == "max":
+                    result = readings
+                else:
+                    result = readings / readingsc
         else:
-            result = readings / readingsc
-        """
+            result = self.getReading()
+        
         if result == 0:
             msg = "Error: Check wiring for the " + self.sensorname
             msg += " measurement, no voltage detected on ADC input "
@@ -113,11 +143,13 @@ class Analogue(sensor.Sensor):
                 msg += str(self.adcpin)
                 print(msg)
                 return None
-        vout = float(result)/1023 * 3.3
 
-        if self.sensorname == "WindDirection":
-            return self.getWindDirection(self.pullup / ((self.sensorvoltage / vout) - 1))
+	if self.sensorname == "WindDirection":
+	    return result
 
+	"""print(self.sensorname + " " + str(self.sensorvoltage))"""
+
+        vout = float(result)/1023 * self.sensorvoltage
         if self.pulldown != None:
             resout = (self.pulldown * self.sensorvoltage) / vout - self.pulldown
         elif self.pullup != None:
@@ -139,3 +171,19 @@ class Analogue(sensor.Sensor):
                 bestVal = value
 
         return bestVal
+
+    def getReading(self):
+	if self.sensorname == "Dust":
+	    dus = dustBackend.DustBackend(self.adcpin, self.digpin)
+	    return dus.Fetch()
+	elif self.sensorname == "Microphone":
+	    mic = microphone.Microphone(self.adcpin)
+	    return mic.Fetch()
+
+	reading = self.adc.readadc(self.adcpin)
+
+	if (self.sensorname == "WindDirection" and reading != 0 and reading != 1023):
+            vout = float(reading)/1023 * 3.3
+            return self.getWindDirection(self.pullup / ((self.sensorvoltage / vout) - 1))
+
+	return reading
